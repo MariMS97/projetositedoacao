@@ -26,7 +26,7 @@ def importar_doadores(request):
                 messages.error(request, f"Erro ao importar: {str(e)}")
     else:
         form = ImportarDoadoresForm()
-    return render(request, 'doadores/importar.html', {'form': form})
+    return render(request, 'meuapp/templates/doador/importar.html', {'form': form})
 
 
 def cadastrar_doador(request):

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Excluir Doador{% endblock %}
+{% block content %}
+<h2>Excluir Doador</h2>
+<p>Tem certeza que deseja excluir o doador <strong>{{ doador.nome }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sim, excluir</button>
+    <a href="{% url 'listar_doadores' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

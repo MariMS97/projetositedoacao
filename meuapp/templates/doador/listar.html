@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Doadores{% endblock %}
+{% block content %}
+<h2>Lista de Doadores</h2>
+<a href="{% url 'cadastrar_doador' %}" class="btn btn-primary mb-3">Novo Doador</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Tipo Sanguíneo</th>
+            <th>Idade</th>
+            <th>Cidade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doador in doadores %}
+        <tr>
+            <td>{{ doador.nome }}</td>
+            <td>{{ doador.cpf }}</td>
+            <td>{{ doador.tipo_sanguineo }}</td>
+            <td>{{ doador.idade }}</td>
+            <td>{{ doador.cidade_residencia }}</td>
+            <td>
+                <a href="{% url 'editar_doador' doador.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                <a href="{% url 'deletar_doador' doador.pk %}" class="btn btn-sm btn-danger">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

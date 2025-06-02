@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Editar Receptor{% endblock %}
+{% block content %}
+<h2>Editar Receptor</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a href="{% url 'listar_receptores' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

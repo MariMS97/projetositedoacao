@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Cadastrar Doador{% endblock %}
+{% block content %}
+<h2>Cadastrar Doador</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Salvar</button>
+    <a href="{% url 'listar_doadores' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
