@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Doadores{% endblock %}
+
+{% block content %}
+        <section class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold text-green-600 mb-4">Lista de Doadores</h2>
+            <form method="get" class="mb-4">
+                <div class="flex space-x-4">
+                    <input type="text" name="cpf" id="cpf" placeholder="Filtrar por CPF"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Filtrar
+                    </button>
+                    <a href="{% url 'listar_doadores' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Limpar Filtro
+                    </a>
+                </div>
+            </form>
+            {% if page_obj %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full leading-normal shadow-md rounded-lg overflow-hidden">
+                        <thead class="bg-gray-200 text-gray-700">
+                            <tr>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Nome</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">CPF</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Idade</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Sexo</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Data de Nascimento</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Cidade Natal</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estado Natal</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Profissão</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Cidade Residência</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estado Residência</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estado Civil</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Contato Emergência</th>
+                                <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Tipo Sanguíneo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            {% for doador in page_obj %}
+                                <tr>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.nome }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.cpf }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.idade }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.sexo }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.data_nascimento|date:"d/m/Y" }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.cidade_natal }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.estado_natal }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.profissao }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.cidade_residencia }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.estado_residencia }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.estado_civil }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.contato_emergencia }}</td>
+                                    <td class="px-5 py-5 border-b border-gray-200 text-sm">{{ doador.tipo_sanguineo }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if page_obj.has_previous or page_obj.has_next %}
+                    <div class="flex justify-center mt-4">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1{% if cpf %}&cpf={{ cpf }}{% endif %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">
+                                Primeiro
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}{% if cpf %}&cpf={{ cpf }}{% endif %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4">
+                                Anterior
+                            </a>
+                        {% endif %}
+                        <span class="bg-gray-200 text-gray-700 font-bold py-2 px-4">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if cpf %}&cpf={{ cpf }}{% endif %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4">
+                                Próximo
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}{% if cpf %}&cpf={{ cpf }}{% endif %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
+                                Último
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-700">Nenhum doador encontrado.</p>
+            {% endif %}
+            <a href="{% url 'index' %}" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">Voltar para a Tela Inicial</a>
+        </section>
+{% endblock %}

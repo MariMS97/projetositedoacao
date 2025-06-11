@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Estilos específicos para a página home */
+        body.pagina-home {
+            background-color: #e0f7fa;
+            text-align: center;
+        }
+
+        body.pagina-home h1 {
+            color: #00796b;
+            font-size: 2.5em;
+        }
+
+        body.pagina-home a {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #00796b;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        body.pagina-home a:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body class="pagina-home">
+    <h1>Bem-vindo ao SNDOT</h1>
+    <a href="{% url 'pagina_do_doador' %}">Página do Doador</a><br>
+    <a href="{% url 'pagina_do_receptor' %}">Página do Receptor</a>
+</body>
+</html>

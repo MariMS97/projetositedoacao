@@ -27,7 +27,6 @@ class Pessoa(models.Model):
     nome = models.CharField(max_length=100)
     tipo_sanguineo = models.CharField(max_length=3, choices=TIPO_SANGUINEO_CHOICES)
     data_nascimento = models.DateField()
-    idade = models.IntegerField()
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
     profissao = models.CharField(max_length=100)
     estado_natal = models.CharField(max_length=2)
@@ -40,9 +39,12 @@ class Pessoa(models.Model):
     class Meta:
         abstract = True
 
-    def calcular_idade(self):
+    @property
+    def idade(self):
         hoje = date.today()
-        return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
+        if self.data_nascimento:
+            return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
+        return None
 
 
 class Doador(Pessoa):
@@ -55,8 +57,8 @@ class Doador(Pessoa):
 class Receptor(Pessoa):
     orgao_necessario = models.CharField(max_length=50)
     gravidade_condicao = models.CharField(max_length=50)
-    centro_transplante_vinculado = models.CharField(max_length=100)
-    posicao_lista_espera = models.CharField(max_length=20)
+    centro_transplante = models.CharField(max_length=100)
+    posicao_lista_espera = models.CharField(max_length=1000)
     data_cadastro = models.DateField(auto_now_add=True)
 
     def __str__(self):

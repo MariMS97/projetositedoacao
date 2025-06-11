@@ -1,7 +1,8 @@
 from django import forms
-from .models import Doador, Receptor  # Importa os dois modelos
+from .models import Doador, Receptor
+from datetime import date
 
-# Dados de estados e cidades (mesmo do seu código)
+# Estados e cidades do Brasil
 BRAZILIAN_STATES_AND_CITIES = {
     "AC": ["Rio Branco", "Cruzeiro do Sul"],
     "AL": ["Maceió", "Arapiraca"],
@@ -71,8 +72,6 @@ ESTADO_CIVIL_CHOICES = [
     ('União Estável', 'União Estável')
 ]
 
-
-
 class ImportarDoadoresForm(forms.Form):
     json_file = forms.FileField(
         label='Arquivo JSON',
@@ -82,12 +81,9 @@ class ImportarDoadoresForm(forms.Form):
 class CadastrarDoadorForm(forms.ModelForm):
     estado_natal = forms.ChoiceField(choices=STATE_CHOICES, label="Estado Natal")
     estado_residencia = forms.ChoiceField(choices=STATE_CHOICES, label="Estado de Residência")
-
     cidade_natal = forms.CharField(max_length=100, required=False, label="Cidade Natal")
     cidade_residencia = forms.CharField(max_length=100, required=False, label="Cidade de Residência")
-
     outra_profissao = forms.CharField(max_length=100, required=False)
-
     sexo = forms.ChoiceField(choices=SEXO_CHOICES, label="Sexo")
     tipo_sanguineo = forms.ChoiceField(choices=TIPO_SANGUINEO_CHOICES, label="Tipo Sanguíneo")
     profissao = forms.ChoiceField(choices=PROFISSAO_CHOICES, label="Profissão")
@@ -96,18 +92,17 @@ class CadastrarDoadorForm(forms.ModelForm):
     class Meta:
         model = Doador
         fields = [
-            'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'idade', 'sexo',
+            'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'sexo',
             'profissao', 'estado_natal', 'cidade_natal', 'estado_residencia',
             'cidade_residencia', 'estado_civil', 'contato_emergencia'
         ]
         widgets = {
-            'data_nascimento': forms.DateInput(attrs={'type': 'date'}),
-            'idade': forms.HiddenInput(),
+            'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
         }
+        input_formats = {'data_nascimento': ['%Y/%m/%d', '%Y-%m-%d']}
 
     def clean(self):
         dados_validados = super().clean()
-
         profissao = dados_validados.get('profissao')
         outra_profissao = dados_validados.get('outra_profissao')
         sexo = dados_validados.get('sexo')
@@ -118,19 +113,14 @@ class CadastrarDoadorForm(forms.ModelForm):
         elif profissao == 'Outra' and outra_profissao:
             dados_validados['profissao'] = outra_profissao
 
-        estado_natal = dados_validados.get('estado_natal')
-        cidade_natal = dados_validados.get('cidade_natal')
-        if estado_natal and not cidade_natal:
+        if dados_validados.get('estado_natal') and not dados_validados.get('cidade_natal'):
             self.add_error('cidade_natal', 'Cidade natal é obrigatória quando o estado é selecionado.')
 
-        estado_residencia = dados_validados.get('estado_residencia')
-        cidade_residencia = dados_validados.get('cidade_residencia')
-        if estado_residencia and not cidade_residencia:
+        if dados_validados.get('estado_residencia') and not dados_validados.get('cidade_residencia'):
             self.add_error('cidade_residencia', 'Cidade de residência é obrigatória quando o estado é selecionado.')
 
         masculino_estados = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo']
         feminino_estados = ['Solteira', 'Casada', 'Divorciada', 'Viúva']
-
         if sexo == 'M' and estado_civil in feminino_estados:
             self.add_error('estado_civil', 'Estado civil selecionado não corresponde ao sexo masculino.')
         elif sexo == 'F' and estado_civil in masculino_estados:
@@ -139,15 +129,18 @@ class CadastrarDoadorForm(forms.ModelForm):
         return dados_validados
 
 
+class ImportarReceptoresForm(forms.Form):
+    json_file = forms.FileField(
+        label='Arquivo JSON',
+        widget=forms.FileInput(attrs={'accept': '.json'})
+    )
+
 class CadastrarReceptorForm(forms.ModelForm):
     estado_natal = forms.ChoiceField(choices=STATE_CHOICES, label="Estado Natal")
     estado_residencia = forms.ChoiceField(choices=STATE_CHOICES, label="Estado de Residência")
-
     cidade_natal = forms.CharField(max_length=100, required=False, label="Cidade Natal")
     cidade_residencia = forms.CharField(max_length=100, required=False, label="Cidade de Residência")
-
     outra_profissao = forms.CharField(max_length=100, required=False)
-
     sexo = forms.ChoiceField(choices=SEXO_CHOICES, label="Sexo")
     tipo_sanguineo = forms.ChoiceField(choices=TIPO_SANGUINEO_CHOICES, label="Tipo Sanguíneo")
     profissao = forms.ChoiceField(choices=PROFISSAO_CHOICES, label="Profissão")
@@ -156,18 +149,18 @@ class CadastrarReceptorForm(forms.ModelForm):
     class Meta:
         model = Receptor
         fields = [
-            'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'idade', 'sexo',
+            'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'sexo',
             'profissao', 'estado_natal', 'cidade_natal', 'estado_residencia',
-            'cidade_residencia', 'estado_civil', 'contato_emergencia', 'gravidade', 'posicao_fila'
+            'cidade_residencia', 'estado_civil', 'contato_emergencia',
+            'orgao_necessario', 'gravidade_condicao', 'centro_transplante', 'posicao_lista_espera'
         ]
         widgets = {
-            'data_nascimento': forms.DateInput(attrs={'type': 'date'}),
-            'idade': forms.HiddenInput(),
+            'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
         }
+        input_formats = {'data_nascimento': ['%Y/%m/%d', '%Y-%m-%d']}
 
     def clean(self):
         dados_validados = super().clean()
-
         profissao = dados_validados.get('profissao')
         outra_profissao = dados_validados.get('outra_profissao')
         sexo = dados_validados.get('sexo')
@@ -178,19 +171,14 @@ class CadastrarReceptorForm(forms.ModelForm):
         elif profissao == 'Outra' and outra_profissao:
             dados_validados['profissao'] = outra_profissao
 
-        estado_natal = dados_validados.get('estado_natal')
-        cidade_natal = dados_validados.get('cidade_natal')
-        if estado_natal and not cidade_natal:
+        if dados_validados.get('estado_natal') and not dados_validados.get('cidade_natal'):
             self.add_error('cidade_natal', 'Cidade natal é obrigatória quando o estado é selecionado.')
 
-        estado_residencia = dados_validados.get('estado_residencia')
-        cidade_residencia = dados_validados.get('cidade_residencia')
-        if estado_residencia and not cidade_residencia:
+        if dados_validados.get('estado_residencia') and not dados_validados.get('cidade_residencia'):
             self.add_error('cidade_residencia', 'Cidade de residência é obrigatória quando o estado é selecionado.')
 
         masculino_estados = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo']
         feminino_estados = ['Solteira', 'Casada', 'Divorciada', 'Viúva']
-
         if sexo == 'M' and estado_civil in feminino_estados:
             self.add_error('estado_civil', 'Estado civil selecionado não corresponde ao sexo masculino.')
         elif sexo == 'F' and estado_civil in masculino_estados:
