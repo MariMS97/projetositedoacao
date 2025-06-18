@@ -7,6 +7,10 @@ from .forms import (
 from .models import Doador, Receptor
 from datetime import datetime
 import json
+from .models import Administrador
+from .forms import AdministradorForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 # --- Página Inicial ---
 def home(request):
@@ -17,6 +21,9 @@ def pagina_do_doador(request):
 
 def pagina_do_receptor(request):
     return render(request, 'pagina_do_receptor.html')
+
+def pagina_do_administrador(request):
+    return render(request, 'pagina_do_administrador.html')
 
 def index(request):
     return render(request, 'index.html')
@@ -56,7 +63,7 @@ def importar_doadores(request):
         form = ImportarDoadoresForm()
     return render(request, 'importar_doador.html', {'form': form})
 
-
+@login_required
 def cadastrar_doador(request):
     if request.method == 'POST':
         form = CadastrarDoadorForm(request.POST)
@@ -149,7 +156,7 @@ def importar_receptores(request):
         form = ImportarReceptoresForm()
     return render(request, 'importar_receptores.html', {'form': form})
 
-
+@login_required
 def cadastrar_receptor(request):
     if request.method == 'POST':
         form = CadastrarReceptorForm(request.POST)
@@ -162,7 +169,7 @@ def cadastrar_receptor(request):
     return render(request, 'cadastrar_receptores.html', {'form': form})
 
 
-from django.core.paginator import Paginator
+
 
 def listar_receptores(request):
     cpf = request.GET.get('cpf')
@@ -202,3 +209,62 @@ def deletar_receptor(request, pk):
         messages.success(request, "Receptor excluído com sucesso.")
         return redirect('listar_receptores')
     return render(request, 'deletar_receptores.html', {'receptor': receptor})
+
+# --- ADMINISTRADOR ---
+
+def cadastrar_administrador(request):
+    if request.method == 'POST':
+        form = AdministradorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Administrador cadastrado com sucesso.")
+            return redirect('listar_administradores')
+    else:
+        form = AdministradorForm()
+    return render(request, 'cadastrar_administrador.html', {'form': form})
+
+def listar_administradores(request):
+    administradores = Administrador.objects.all()
+    return render(request, 'listar_administradores.html', {'administradores': administradores})
+
+def login_administrador(request):
+    if request.method == 'POST':
+        nome_usuario = request.POST.get('username')
+        senha = request.POST.get('password')
+        user = authenticate(request, username=nome_usuario, password=senha)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect('painel_admin')
+        else:
+            messages.error(request, "Credenciais inválidas ou sem permissão.")
+    return render(request, 'login_administrador.html')
+
+@login_required
+def logout_administrador(request):
+    logout(request)
+    return redirect('index')
+
+def buscar_administrador(request, pk):
+    administrador = get_object_or_404(Administrador, pk=pk)
+    return render(request, 'detalhes_administrador.html', {'administrador': administrador})
+
+def editar_administrador(request, pk):
+    administrador = get_object_or_404(Administrador, pk=pk)
+    if request.method == 'POST':
+        form = AdministradorForm(request.POST, instance=administrador)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Administrador atualizado com sucesso.")
+            return redirect('listar_administradores')
+    else:
+        form = AdministradorForm(instance=administrador)
+    return render(request, 'editar_administrador.html', {'form': form})
+
+def excluir_administrador(request, pk):
+    administrador = get_object_or_404(Administrador, pk=pk)
+    if request.method == 'POST':
+        administrador.delete()
+        messages.success(request, "Administrador excluído com sucesso.")
+        return redirect('listar_administradores')
+    return render(request, 'excluir_administrador.html', {'administrador': administrador})

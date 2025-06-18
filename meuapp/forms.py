@@ -1,7 +1,9 @@
 from django import forms
-from .models import Doador, Receptor
+from .models import Doador, Receptor, Administrador
 from datetime import date
-
+from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password
+import re
 # Estados e cidades do Brasil
 BRAZILIAN_STATES_AND_CITIES = {
     "AC": ["Rio Branco", "Cruzeiro do Sul"],
@@ -100,7 +102,28 @@ class CadastrarDoadorForm(forms.ModelForm):
             'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
         }
         input_formats = {'data_nascimento': ['%Y/%m/%d', '%Y-%m-%d']}
+    
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
 
+        # Remove pontos e traço
+        cpf_numeros = re.sub(r'[.-]', '', cpf or '')
+
+        # Verifica se tem exatamente 11 dígitos numéricos
+        if not re.fullmatch(r'\d{11}', cpf_numeros):
+            raise ValidationError('CPF deve estar no formato 000.000.000-00 ou conter 11 dígitos numéricos.')
+
+        # Verifica unicidade no modelo Doador
+        if Doador.objects.filter(cpf=cpf_numeros).exists():
+            raise ValidationError('Este CPF já está cadastrado como doador.')
+
+        # Opcional: verificar se já existe como receptor
+        if Receptor.objects.filter(cpf=cpf_numeros).exists():
+            raise ValidationError('Este CPF já está cadastrado como receptor.')
+
+        # Retorna o CPF normalizado (sem pontuação)
+        return cpf_numeros
+    
     def clean(self):
         dados_validados = super().clean()
         profissao = dados_validados.get('profissao')
@@ -145,7 +168,7 @@ class CadastrarReceptorForm(forms.ModelForm):
     tipo_sanguineo = forms.ChoiceField(choices=TIPO_SANGUINEO_CHOICES, label="Tipo Sanguíneo")
     profissao = forms.ChoiceField(choices=PROFISSAO_CHOICES, label="Profissão")
     estado_civil = forms.ChoiceField(choices=ESTADO_CIVIL_CHOICES, label="Estado Civil")
-
+    
     class Meta:
         model = Receptor
         fields = [
@@ -158,6 +181,23 @@ class CadastrarReceptorForm(forms.ModelForm):
             'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
         }
         input_formats = {'data_nascimento': ['%Y/%m/%d', '%Y-%m-%d']}
+    
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+
+        cpf_numeros = re.sub(r'[.-]', '', cpf or '')
+
+        if not re.fullmatch(r'\d{11}', cpf_numeros):
+            raise ValidationError('CPF deve estar no formato 000.000.000-00 ou conter 11 dígitos numéricos.')
+
+        if Receptor.objects.filter(cpf=cpf_numeros).exists():
+            raise ValidationError('Este CPF já está cadastrado como receptor.')
+
+        # Opcional: verificar se já existe como doador
+        if Doador.objects.filter(cpf=cpf_numeros).exists():
+            raise ValidationError('Este CPF já está cadastrado como doador.')
+
+        return cpf_numeros
 
     def clean(self):
         dados_validados = super().clean()
@@ -185,3 +225,92 @@ class CadastrarReceptorForm(forms.ModelForm):
             self.add_error('estado_civil', 'Estado civil selecionado não corresponde ao sexo feminino.')
 
         return dados_validados
+
+class CadastrarAdministradorForm(forms.ModelForm):
+    estado_natal = forms.ChoiceField(choices=STATE_CHOICES, label="Estado Natal")
+    estado_residencia = forms.ChoiceField(choices=STATE_CHOICES, label="Estado de Residência")
+    cidade_natal = forms.CharField(max_length=100, required=False, label="Cidade Natal")
+    cidade_residencia = forms.CharField(max_length=100, required=False, label="Cidade de Residência")
+    outra_profissao = forms.CharField(max_length=100, required=False)
+    sexo = forms.ChoiceField(choices=SEXO_CHOICES, label="Sexo")
+    tipo_sanguineo = forms.ChoiceField(choices=TIPO_SANGUINEO_CHOICES, label="Tipo Sanguíneo")
+    profissao = forms.ChoiceField(choices=PROFISSAO_CHOICES, label="Profissão")
+    estado_civil = forms.ChoiceField(choices=ESTADO_CIVIL_CHOICES, label="Estado Civil")
+
+    senha = forms.CharField(widget=forms.PasswordInput(), label="Senha")
+    confirmar_senha = forms.CharField(widget=forms.PasswordInput(), label="Confirmar Senha")
+
+    class Meta:
+        model = Administrador
+        fields = [
+            'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'sexo',
+            'profissao', 'estado_natal', 'cidade_natal', 'estado_residencia',
+            'cidade_residencia', 'estado_civil', 'contato_emergencia',
+            'nome_usuario', 'senha'
+        ]
+        widgets = {
+            'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
+        }
+        input_formats = {'data_nascimento': ['%Y/%m/%d', '%Y-%m-%d']}
+
+    def clean_cpf(self):
+        cpf = self.cleaned_data.get('cpf')
+        cpf_numeros = re.sub(r'[.-]', '', cpf or '')
+
+        if not re.fullmatch(r'\d{11}', cpf_numeros):
+            raise ValidationError('CPF deve conter exatamente 11 dígitos numéricos.')
+
+        if Administrador.objects.filter(cpf=cpf_numeros).exists():
+            raise ValidationError('Este CPF já está cadastrado como administrador.')
+
+        return cpf_numeros
+
+    def clean(self):
+        dados = super().clean()
+        profissao = dados.get('profissao')
+        outra_profissao = dados.get('outra_profissao')
+        sexo = dados.get('sexo')
+        estado_civil = dados.get('estado_civil')
+        senha = dados.get('senha')
+        confirmar_senha = dados.get('confirmar_senha')
+
+        if profissao == 'Outra' and not outra_profissao:
+            self.add_error('outra_profissao', 'Por favor, especifique a outra profissão.')
+        elif profissao == 'Outra':
+            dados['profissao'] = outra_profissao
+
+        if dados.get('estado_natal') and not dados.get('cidade_natal'):
+            self.add_error('cidade_natal', 'Cidade natal é obrigatória quando o estado é selecionado.')
+
+        if dados.get('estado_residencia') and not dados.get('cidade_residencia'):
+            self.add_error('cidade_residencia', 'Cidade de residência é obrigatória quando o estado é selecionado.')
+
+        masculino_estados = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo']
+        feminino_estados = ['Solteira', 'Casada', 'Divorciada', 'Viúva']
+        if sexo == 'M' and estado_civil in feminino_estados:
+            self.add_error('estado_civil', 'Estado civil selecionado não corresponde ao sexo masculino.')
+        elif sexo == 'F' and estado_civil in masculino_estados:
+            self.add_error('estado_civil', 'Estado civil selecionado não corresponde ao sexo feminino.')
+
+        if senha and confirmar_senha and senha != confirmar_senha:
+            self.add_error('confirmar_senha', 'As senhas não coincidem.')
+
+        return dados
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+
+        # Criptografar a senha
+        senha = self.cleaned_data.get('senha')
+        if senha:
+            instance.senha = make_password(senha)
+
+        if commit:
+            instance.save()
+        return instance
+
+class ImportarAdministradoresForm(forms.Form):
+    json_file = forms.FileField(
+        label='Arquivo JSON',
+        widget=forms.FileInput(attrs={'accept': '.json'})
+    )

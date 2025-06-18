@@ -21,7 +21,7 @@ ESTADO_CIVIL_CHOICES = [
     ('Viuvo', 'Viúvo'),
     ('União Estável', 'União Estável')
 ]
-
+''' Classe Pessoa que serve como base para Doador, Receptor e Administrador '''
 class Pessoa(models.Model):
     cpf = models.CharField(max_length=11, unique=True)
     nome = models.CharField(max_length=100)
@@ -46,14 +46,16 @@ class Pessoa(models.Model):
             return hoje.year - self.data_nascimento.year - ((hoje.month, hoje.day) < (self.data_nascimento.month, self.data_nascimento.day))
         return None
 
+''' Classes Doador, Receptor e Administrador que herdam de Pessoa '''
 
+# Classe Doador que herda de Pessoa
 class Doador(Pessoa):
     intencao_doar = models.JSONField(null=True, blank=True)  # {"deseja_doar": True, "orgaos": ["Coração", "Rins"]}
 
     def __str__(self):
         return f"{self.nome} ({self.cpf})"
 
-
+# Classe Receptor que herda de Pessoa
 class Receptor(Pessoa):
     orgao_necessario = models.CharField(max_length=50)
     gravidade_condicao = models.CharField(max_length=50)
@@ -63,3 +65,12 @@ class Receptor(Pessoa):
 
     def __str__(self):
         return f"{self.nome} ({self.cpf})"
+
+# Classe Administrador que herda de Pessoa
+class Administrador(Pessoa):
+    nome_usuario = models.CharField(max_length=100, unique=True)
+    senha = models.CharField(max_length=100)
+    logado = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.nome} ({self.nome_usuario})"

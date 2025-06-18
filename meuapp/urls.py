@@ -21,4 +21,14 @@ urlpatterns = [
     path('receptores/', views.listar_receptores, name='listar_receptores'),
     path('receptores/editar/<int:pk>/', views.editar_receptor, name='editar_receptor'),
     path('receptores/deletar/<int:pk>/', views.deletar_receptor, name='deletar_receptor'),
+
+    # ADMINISTRADORES
+    path('login/', views.login_administrador, name='login_administrador'),
+    path('administradores/importar/', views.importar_administradores, name='importar_administradores'),
+    path('administradores/', views.listar_administradores, name='listar_administradores'),
+    path('administradores/cadastrar/', views.cadastrar_administrador, name='cadastrar_administrador'),
+    path('administradores/<int:pk>/', views.buscar_administrador, name='detalhes_administrador'),
+    path('administradores/editar/<int:pk>/', views.editar_administrador, name='editar_administrador'),
+    path('administradores/excluir/<int:pk>/', views.excluir_administrador, name='excluir_administrador'),
+
 ]
