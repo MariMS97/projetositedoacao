@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Órgãos{% endblock %}
+{% block content %}
+<h2>Órgãos Cadastrados</h2>
+<a href="{% url 'cadastrar_orgao' %}" class="btn btn-success">Novo Órgão</a>
+<table class="table mt-3">
+  <tr>
+    <th>Nome</th>
+    <th>Ações</th>
+  </tr>
+  {% for orgao in orgaos %}
+  <tr>
+    <td>{{ orgao.nome }}</td>
+    <td>
+      <a href="{% url 'editar_orgao' orgao.pk %}" class="btn btn-warning btn-sm">Editar</a>
+      <a href="{% url 'excluir_orgao' orgao.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

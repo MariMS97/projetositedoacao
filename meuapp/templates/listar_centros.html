@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Centros de Distribuição{% endblock %}
+{% block content %}
+<h2>Centros de Distribuição</h2>
+<table class="table">
+  <tr>
+    <th>Nome</th>
+    <th>Estado</th>
+    <th>Ações</th>
+  </tr>
+  {% for centro in centros %}
+  <tr>
+    <td>{{ centro.nome }}</td>
+    <td>{{ centro.estado }}</td>
+    <td>
+      <a href="{% url 'editar_centro' centro.pk %}" class="btn btn-warning btn-sm">Editar</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,152 @@
+[
+    {
+      "nome": "Centro de Distribuição de Órgãos - Fortaleza",
+      "ativo": true,
+      "_cidade": "Fortaleza",
+      "_estado": "CE",
+      "_endereco": "Av. Santos Dumont, 2500 - Aldeota",
+      "_telefone": "(85) 3101-2500",
+      "_estoque": {
+        "coração": 4,
+        "rim": 11,
+        "fígado": 7,
+        "pulmão": 2,
+        "córnea": 18
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Salvador",
+      "ativo": true,
+      "_cidade": "Salvador",
+      "_estado": "BA",
+      "_endereco": "Ladeira do Hospital Geral, s/n - Nazaré",
+      "_telefone": "(71) 2203-5000",
+      "_estoque": {
+        "coração": 3,
+        "rim": 9,
+        "fígado": 5,
+        "pâncreas": 1,
+        "córnea": 15
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Rio de Janeiro",
+      "ativo": true,
+      "_cidade": "Rio de Janeiro",
+      "_estado": "RJ",
+      "_endereco": "Rua Marquês de Pombal, 125 - Centro",
+      "_telefone": "(21) 2299-9000",
+      "_estoque": {
+        "coração": 6,
+        "rim": 14,
+        "fígado": 9,
+        "pulmão": 4,
+        "válvula cardíaca": 8
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - São Paulo",
+      "ativo": true,
+      "_cidade": "São Paulo",
+      "_estado": "SP",
+      "_endereco": "Av. Dr. Enéas Carvalho de Aguiar, 255 - Cerqueira César",
+      "_telefone": "(11) 2661-5000",
+      "_estoque": {
+        "coração": 8,
+        "rim": 16,
+        "fígado": 12,
+        "pulmão": 5,
+        "córnea": 25
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Brasília",
+      "ativo": true,
+      "_cidade": "Brasília",
+      "_estado": "DF",
+      "_endereco": "SMHN Quadra 101 - Asa Norte",
+      "_telefone": "(61) 3325-5050",
+      "_estoque": {
+        "coração": 2,
+        "rim": 7,
+        "fígado": 4,
+        "pâncreas": 1,
+        "córnea": 12
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Belo Horizonte",
+      "ativo": true,
+      "_cidade": "Belo Horizonte",
+      "_estado": "MG",
+      "_endereco": "Av. Alfredo Balena, 110 - Santa Efigênia",
+      "_telefone": "(31) 3409-9000",
+      "_estoque": {
+        "coração": 5,
+        "rim": 10,
+        "fígado": 6,
+        "pulmão": 3,
+        "válvula cardíaca": 7
+      }
+    },
+    { 
+      "nome": "Centro de Distribuição de Órgãos - Curitiba",
+      "ativo": true,
+      "_cidade": "Curitiba",
+      "_estado": "PR",
+      "_endereco": "Rua General Carneiro, 181 - Centro",
+      "_telefone": "(41) 3360-1800",
+      "_estoque": {
+        "coração": 3,
+        "rim": 8,
+        "fígado": 5,
+        "córnea": 14,
+        "válvula cardíaca": 5
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Porto Alegre",
+      "ativo": true,
+      "_cidade": "Porto Alegre",
+      "_estado": "RS",
+      "_endereco": "Rua Ramiro Barcelos, 2350 - Santa Cecília",
+      "_telefone": "(51) 3359-8000",
+      "_estoque": {
+        "coração": 4,
+        "rim": 9,
+        "fígado": 6,
+        "pulmão": 2,
+        "córnea": 16
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Recife",
+      "ativo": true,
+      "_cidade": "Recife",
+      "_estado": "PE",
+      "_endereco": "Av. Agamenon Magalhães, s/n - Derby",
+      "_telefone": "(81) 3182-7000",
+      "_estoque": {
+        "coração": 2,
+        "rim": 6,
+        "fígado": 4,
+        "pâncreas": 1,
+        "córnea": 10
+      }
+    },
+    {
+      "nome": "Centro de Distribuição de Órgãos - Manaus",
+      "ativo": true,
+      "_cidade": "Manaus",
+      "_estado": "AM",
+      "_endereco": "Av. Apurinã, 4 - Praça 14 de Janeiro",
+      "_telefone": "(92) 3613-3000",
+      "_estoque": {
+        "coração": 1,
+        "rim": 4,
+        "fígado": 3,
+        "córnea": 8,
+        "válvula cardíaca": 3
+      }
+    }
+  ]

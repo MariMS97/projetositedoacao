@@ -1,9 +1,9 @@
 from django import forms
-from .models import Doador, Receptor, Administrador
-from datetime import date
 from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
+from .models import Doador, Receptor, Administrador, CentroDistribuicao, Orgao
 import re
+
 # Estados e cidades do Brasil
 BRAZILIAN_STATES_AND_CITIES = {
     "AC": ["Rio Branco", "Cruzeiro do Sul"],
@@ -246,7 +246,7 @@ class CadastrarAdministradorForm(forms.ModelForm):
             'cpf', 'nome', 'tipo_sanguineo', 'data_nascimento', 'sexo',
             'profissao', 'estado_natal', 'cidade_natal', 'estado_residencia',
             'cidade_residencia', 'estado_civil', 'contato_emergencia',
-            'nome_usuario', 'senha'
+            'user', 'senha'
         ]
         widgets = {
             'data_nascimento': forms.DateInput(format='%Y/%m/%d', attrs={'type': 'date'}),
@@ -299,12 +299,9 @@ class CadastrarAdministradorForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-
-        # Criptografar a senha
         senha = self.cleaned_data.get('senha')
         if senha:
             instance.senha = make_password(senha)
-
         if commit:
             instance.save()
         return instance
@@ -314,3 +311,19 @@ class ImportarAdministradoresForm(forms.Form):
         label='Arquivo JSON',
         widget=forms.FileInput(attrs={'accept': '.json'})
     )
+
+class ImportarCentrosForm(forms.Form):
+    json_file = forms.FileField(
+        label='Arquivo JSON',
+        widget=forms.FileInput(attrs={'accept': '.json'})
+    )
+
+class OrgaoForm(forms.ModelForm):
+    class Meta:
+        model = Orgao
+        fields = ['nome', 'tipo']
+
+class CentroDistribuicaoForm(forms.ModelForm):
+    class Meta:
+        model = CentroDistribuicao
+        fields = ['nome', 'estado', 'cidade', 'ativo']

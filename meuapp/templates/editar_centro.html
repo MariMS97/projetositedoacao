@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Editar Centro{% endblock %}
+{% block content %}
+<h2>Editar Centro de Distribuição</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Salvar</button>
+  <a href="{% url 'listar_centros' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,16 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .forms import (
-    ImportarDoadoresForm, CadastrarDoadorForm,
-    ImportarReceptoresForm, CadastrarReceptorForm
-)
-from .models import Doador, Receptor
-from datetime import datetime
-import json
-from .models import Administrador
-from .forms import AdministradorForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+import json
+from .models import Doador, Receptor, Administrador, Orgao, CentroDistribuicao
+from .forms import (
+    ImportarDoadoresForm, CadastrarDoadorForm,
+    ImportarReceptoresForm, CadastrarReceptorForm,
+    CadastrarAdministradorForm,
+    ImportarAdministradoresForm, ImportarCentrosForm,
+    OrgaoForm, CentroDistribuicaoForm
+)
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import render
 
 # --- Página Inicial ---
 def home(request):
@@ -214,13 +219,13 @@ def deletar_receptor(request, pk):
 
 def cadastrar_administrador(request):
     if request.method == 'POST':
-        form = AdministradorForm(request.POST)
+        form = CadastrarAdministradorForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Administrador cadastrado com sucesso.")
             return redirect('listar_administradores')
     else:
-        form = AdministradorForm()
+        form = CadastrarAdministradorForm()
     return render(request, 'cadastrar_administrador.html', {'form': form})
 
 def listar_administradores(request):
@@ -229,9 +234,9 @@ def listar_administradores(request):
 
 def login_administrador(request):
     if request.method == 'POST':
-        nome_usuario = request.POST.get('username')
+        user = request.POST.get('username')
         senha = request.POST.get('password')
-        user = authenticate(request, username=nome_usuario, password=senha)
+        user = authenticate(request, username=user, password=senha)
 
         if user is not None and user.is_staff:
             login(request, user)
@@ -252,13 +257,13 @@ def buscar_administrador(request, pk):
 def editar_administrador(request, pk):
     administrador = get_object_or_404(Administrador, pk=pk)
     if request.method == 'POST':
-        form = AdministradorForm(request.POST, instance=administrador)
+        form = CadastrarAdministradorForm(request.POST, instance=administrador)
         if form.is_valid():
             form.save()
             messages.success(request, "Administrador atualizado com sucesso.")
             return redirect('listar_administradores')
     else:
-        form = AdministradorForm(instance=administrador)
+        form = CadastrarAdministradorForm(instance=administrador)
     return render(request, 'editar_administrador.html', {'form': form})
 
 def excluir_administrador(request, pk):
@@ -268,3 +273,138 @@ def excluir_administrador(request, pk):
         messages.success(request, "Administrador excluído com sucesso.")
         return redirect('listar_administradores')
     return render(request, 'excluir_administrador.html', {'administrador': administrador})
+
+# --- ÓRGÃOS ---
+@login_required
+def listar_orgaos(request):
+    orgaos = Orgao.objects.all()
+    return render(request, 'listar_orgaos.html', {'orgaos': orgaos})
+
+@login_required
+def cadastrar_orgao(request):
+    form = OrgaoForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Órgão cadastrado com sucesso.")
+        return redirect('listar_orgaos')
+    return render(request, 'cadastrar_orgao.html', {'form': form, 'title': 'Cadastrar'})
+
+@login_required
+def editar_orgao(request, pk):
+    orgao = get_object_or_404(Orgao, pk=pk)
+    form = OrgaoForm(request.POST or None, instance=orgao)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Órgão atualizado com sucesso.")
+        return redirect('listar_orgaos')
+    return render(request, 'cadastrar_orgao.html', {'form': form, 'title': 'Editar'})
+
+@login_required
+def excluir_orgao(request, pk):
+    orgao = get_object_or_404(Orgao, pk=pk)
+    if request.method == 'POST':
+        orgao.delete()
+        messages.success(request, "Órgão excluído com sucesso.")
+        return redirect('listar_orgaos')
+    return render(request, 'excluir_orgao.html', {'orgao': orgao})
+
+# --- CENTROS DE DISTRIBUIÇÃO ---
+@login_required
+def listar_centros(request):
+    centros = CentroDistribuicao.objects.all()
+    return render(request, 'listar_centros.html', {'centros': centros})
+
+@login_required
+def editar_centro(request, pk):
+    centro = get_object_or_404(CentroDistribuicao, pk=pk)
+    form = CentroDistribuicaoForm(request.POST or None, instance=centro)
+    if form.is_valid():
+        form.save()
+        messages.success(request, "Centro atualizado com sucesso.")
+        return redirect('listar_centros')
+    return render(request, 'editar_centro.html', {'form': form})
+
+def importar_administradores(request):
+    if request.method == 'POST':
+        form = ImportarAdministradoresForm(request.POST, request.FILES)
+        if form.is_valid():
+            arquivo_json = form.cleaned_data['json_file']
+            dados_json = json.load(arquivo_json)
+
+            # Se o JSON for uma lista de objetos assim:
+            # [ { "dados": {...}, "acesso": {...} }, {...} ]
+            # Caso contrário, adapte conforme seu JSON real.
+
+            # Aqui verificamos se é uma lista ou só um dict:
+            registros = dados_json
+            if isinstance(dados_json, dict) and 'dados' in dados_json:
+                registros = [dados_json]  # só um registro
+
+            for registro in registros:
+                dados = registro['dados']
+                acesso = registro['acesso']
+
+                # Converter data de nascimento para datetime.date
+                data_nasc = datetime.strptime(dados['data_nascimento'], "%d/%m/%Y").date()
+
+                # Criar ou atualizar User Django
+                user, criado = User.objects.get_or_create(username=acesso['nome_usuario'])
+                if criado:
+                    user.password = make_password(acesso['senha'])
+                    user.is_staff = True  # permite acesso ao admin
+                    user.save()
+
+                # Criar ou atualizar Administrador
+                administrador, criado = Administrador.objects.update_or_create(
+                    cpf=dados['cpf'],
+                    defaults={
+                        'user': user,
+                        'nome': dados['nome'],
+                        'tipo_sanguineo': dados['tipo_sanguineo'],
+                        'data_nascimento': data_nasc,
+                        'sexo': dados['sexo'],
+                        'profissao': dados['profissao'],
+                        'estado_natal': dados['estado_natal'],
+                        'cidade_natal': dados['cidade_natal'],
+                        'estado_residencia': dados['estado_residencia'],
+                        'cidade_residencia': dados['cidade_residencia'],
+                        'estado_civil': dados['estado_civil'],
+                        'contato_emergencia': dados['contato_emergencia'],
+                    }
+                )
+            messages.success(request, "Administradores importados com sucesso!")
+            return redirect('painel_admin')
+
+    else:
+        form = ImportarAdministradoresForm()
+    return render(request, 'importar_administradores.html', {'form': form})
+
+@login_required
+def importar_centros(request):
+    if request.method == 'POST':
+        form = ImportarCentrosForm(request.POST, request.FILES)
+        if form.is_valid():
+            json_file = form.cleaned_data['json_file']
+            dados = json.load(json_file)
+
+            # Se o JSON for uma lista de centros, iterar
+            for item in dados:
+                nome = item.get('_endereco') or item.get('_cidade') or 'Centro sem nome'
+                estado = item.get('_estado')
+
+                CentroDistribuicao.objects.update_or_create(
+                    nome=nome,
+                    estado=estado,
+                    defaults={'estoque': item.get('_estoque')}
+                )
+
+            messages.success(request, "Centros de distribuição importados com sucesso!")
+            return redirect('listar_centros')
+    else:
+        form = ImportarCentrosForm()
+    return render(request, 'importar_centros.html', {'form': form})
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def painel_administrador(request):
+    return render(request, 'meuapp/painel_administrador.html')

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Painel do Administrador{% endblock %}
+{% block content %}
+<h2>Bem-vindo ao Painel do Administrador</h2>
+<ul>
+  <li><a href="{% url 'listar_orgaos' %}">Gerenciar Órgãos</a></li>
+  <li><a href="{% url 'listar_centros' %}">Gerenciar Centros de Distribuição</a></li>
+  <li><a href="{% url 'importar_administradores' %}">Importar Administradores</a></li>
+  <li><a href="{% url 'importar_centros' %}">Importar Centros de Distribuição</a></li>
+  <li><a href="{% url 'logout_administrador' %}" class="btn btn-outline-danger">Sair</a></li>
+</ul>
+{% endblock %}
