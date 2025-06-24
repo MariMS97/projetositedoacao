@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Registrar Doação</h2>
+
+<!-- FORMULÁRIO DE ESCOLHA DO DOADOR -->
+<form method="get" class="mb-4">
+    <label for="doador">Selecionar Doador:</label>
+    <select name="doador" id="doador" class="form-control">
+        <option value="">-- Selecione um doador --</option>
+        {% for d in form.fields.doador.queryset %}
+            <option value="{{ d.id }}" {% if request.GET.doador == d.id|stringformat:"s" %}selected{% endif %}>
+                {{ d.nome }} ({{ d.tipo_sanguineo }})
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-outline-primary mt-2">Carregar opções</button>
+</form>
+
+<!-- FORMULÁRIO DE REGISTRO -->
+{% if request.GET.doador %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.doador }}
+    <style>
+        select[name="doador"] {
+            display: none; /* esconder o campo doador no formulário POST */
+        }
+    </style>
+
+    <div class="form-group">
+        {{ form.orgao.label_tag }} {{ form.orgao }}
+    </div>
+    <div class="form-group">
+        {{ form.receptor.label_tag }} {{ form.receptor }}
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Registrar Doação</button>
+</form>
+{% else %}
+<p>Por favor, selecione um doador acima para continuar.</p>
+{% endif %}
+
+<!-- ERROS DO FORMULÁRIO -->
+{% if form.errors %}
+    <div class="alert alert-danger mt-3">
+        <strong>Erros:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<!-- BOTÃO VOLTAR -->
+<div class="text-center mt-5 mb-5">
+    <a href="{% url 'painel_admin' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Voltar para o Painel
+    </a>
+</div>
+{% endblock %}

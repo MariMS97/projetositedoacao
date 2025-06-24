@@ -8,7 +8,7 @@
             <form method="get" class="mb-4">
                 <div class="flex space-x-4">
                     <input type="text" name="cpf" id="cpf" placeholder="Filtrar por CPF"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Filtrar
                     </button>
@@ -84,6 +84,6 @@
             {% else %}
                 <p class="text-gray-700">Nenhum doador encontrado.</p>
             {% endif %}
-            <a href="{% url 'index' %}" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">Voltar para a Tela Inicial</a>
+            <a href="{% url 'pagina_do_administrador' %}" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">Voltar para a Tela Inicial</a>
         </section>
 {% endblock %}

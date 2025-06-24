@@ -18,7 +18,7 @@
         }
 
         body.pagina-home h1 {
-            color: #00796b;
+            color: #fa1515;
             font-size: 2.5em;
         }
 
@@ -26,21 +26,19 @@
             display: inline-block;
             margin: 10px;
             padding: 10px 20px;
-            background-color: #00796b;
+            background-color: #d41515;
             color: white;
             text-decoration: none;
             border-radius: 5px;
         }
 
         body.pagina-home a:hover {
-            background-color: #004d40;
+            background-color: #9c2529;
         }
     </style>
 </head>
 <body class="pagina-home">
     <h1>Bem-vindo ao SNDOT</h1>
-    <a href="{% url 'pagina_do_doador' %}">Página do Doador</a><br>
-    <a href="{% url 'pagina_do_receptor' %}">Página do Receptor</a>
-    <a href="{% url 'pagina_do_administrador' %}">Página do Administrador</a><br>
+   <a href="{% url 'login_administrador' %}" class="botao">Acessar Sistema</a>
 </body>
 </html>

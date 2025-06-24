@@ -1,13 +1,98 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Página do Administrador</title>
-</head>
-<body>
-    <h1>Gestão e cadastro de administradores</h1>
-    <a href="{% url 'cadastrar_admin' %}">Cadastrar Administrador</a><br>
-    <a href="{% url 'listar_doadores' %}">Listar Doadores</a><br>
-    <a href="{% url 'importar_doadores' %}">Importar Doador</a><br>
-    <!-- Os botões de editar/deletar geralmente aparecem na listagem -->
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Página do Administrador{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title text-primary mt-5 mb-5 text-center">Gestão do Sistema</h1>
+
+    <div class="row justify-content-center g-4">
+
+        <!-- Órgãos -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-heart-pulse fs-1 text-danger"></i>
+                    <h5 class="card-title mt-3">Gerenciar Órgãos</h5>
+                    <a href="{% url 'listar_orgaos' %}" class="btn btn-outline-danger mt-3">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Centros de Distribuição -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-hospital fs-1 text-primary"></i>
+                    <h5 class="card-title mt-3">Centros de Distribuição</h5>
+                    <a href="{% url 'listar_centros' %}" class="btn btn-outline-primary mt-3">Acessar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Importar Administradores -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-arrow-up fs-1 text-dark"></i>
+                    <h5 class="card-title mt-3">Importar Administradores</h5>
+                    <a href="{% url 'importar_administradores' %}" class="btn btn-outline-dark mt-3">Importar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Importar Centros -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-arrow-up-fill fs-1 text-secondary"></i>
+                    <h5 class="card-title mt-3">Importar Centros</h5>
+                    <a href="{% url 'importar_centros' %}" class="btn btn-outline-secondary mt-3">Importar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cadastrar Administrador -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-person-plus-fill fs-1 text-success"></i>
+                    <h5 class="card-title mt-3">Cadastrar Administrador</h5>
+                    <a href="{% url 'cadastrar_administrador' %}" class="btn btn-outline-success mt-3">Cadastrar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Importar Doadores -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-file-arrow-up fs-1 text-warning"></i>
+                    <h5 class="card-title mt-3">Importar Doadores</h5>
+                    <a href="{% url 'importar_doadores' %}" class="btn btn-outline-warning mt-3">Importar</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Importar Receptores -->
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm text-center p-4">
+                <div class="card-body">
+                    <i class="bi bi-file-arrow-up fs-1 text-info"></i>
+                    <h5 class="card-title mt-3">Importar Receptores</h5>
+                    <a href="{% url 'importar_receptores' %}" class="btn btn-outline-info mt-3">Importar</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOTÃO VOLTAR -->
+    <div class="text-center mt-5 mb-5">
+        <a href="{% url 'painel_admin' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Voltar para o Painel
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Histórico de Doações</h2>
+
+<!-- Filtro por status -->
+<form method="get" class="mb-3">
+    <label>Status:</label>
+    <select name="status" class="form-control d-inline w-auto">
+        <option value="">Todos</option>
+        <option value="PROCESSANDO" {% if status_selecionado == 'PROCESSANDO' %}selected{% endif %}>Em Processamento</option>
+        <option value="CONCLUIDA" {% if status_selecionado == 'CONCLUIDA' %}selected{% endif %}>Concluída</option>
+        <option value="CANCELADA" {% if status_selecionado == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+        <option value="CONSULTA" {% if status_selecionado == 'CONSULTA' %}selected{% endif %}>Consulta</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Doador</th>
+            <th>Idade</th>
+            <th>Órgão</th>
+            <th>Receptor</th>
+            <th>Idade</th>
+            <th>Órgão Necessário</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doacao in doacoes %}
+        <tr>
+            <td>{{ doacao.doador.nome }}</td>
+            <td>{{ doacao.doador.idade }}</td>
+            <td>{{ doacao.orgao.nome }}</td>
+            <td>{{ doacao.receptor.nome }}</td>
+            <td>{{ doacao.receptor.idade }}</td>
+            <td>{{ doacao.receptor.orgao_necessario }}</td>
+            <td>{{ doacao.data_registro|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if doacao.status == 'PROCESSANDO' %}
+                    <span class="badge bg-warning text-dark">Em Processamento</span>
+                {% elif doacao.status == 'CONCLUIDA' %}
+                    <span class="badge bg-success">Concluída</span>
+                {% elif doacao.status == 'CANCELADA' %}
+                    <span class="badge bg-danger">Cancelada</span>
+                {% elif doacao.status == 'CONSULTA' %}
+                    <span class="badge bg-info text-dark">Consulta</span>
+                {% else %}
+                    {{ doacao.status }}
+                {% endif %}
+            </td>
+            <td>
+                {% if doacao.status == 'PROCESSANDO' %}
+                    <form method="post" action="{% url 'concluir_doacao' doacao.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">Concluir</button>
+                    </form>
+                {% endif %}
+
+                {% if doacao.status in 'PROCESSANDO CONSULTA' %}
+                    <form method="post" action="{% url 'cancelar_doacao' doacao.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Cancelar</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="9" class="text-center">Nenhuma doação encontrada.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- BOTÃO VOLTAR -->
+<div class="text-center mt-5 mb-5">
+    <a href="{% url 'painel_admin' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Voltar para o Painel
+    </a>
+</div>
+{% endblock %}

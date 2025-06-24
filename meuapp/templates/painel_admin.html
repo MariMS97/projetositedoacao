@@ -1,12 +1,89 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Painel do Administrador{% endblock %}
+
 {% block content %}
-<h2>Bem-vindo ao Painel do Administrador</h2>
-<ul>
-  <li><a href="{% url 'listar_orgaos' %}">Gerenciar Órgãos</a></li>
-  <li><a href="{% url 'listar_centros' %}">Gerenciar Centros de Distribuição</a></li>
-  <li><a href="{% url 'importar_administradores' %}">Importar Administradores</a></li>
-  <li><a href="{% url 'importar_centros' %}">Importar Centros de Distribuição</a></li>
-  <li><a href="{% url 'logout_administrador' %}" class="btn btn-outline-danger">Sair</a></li>
-</ul>
+<div class="container">
+  <h2 class="mt-4 mb-4 text-center">Painel do Administrador</h2>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Gerenciar Doadores -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-person-hearts fs-1 text-primary"></i>
+          <h5 class="card-title mt-3">Doadores</h5>
+          <a href="{% url 'pagina_do_doador' %}" class="btn btn-outline-primary">Acessar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gerenciar Receptores -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-person-plus fs-1 text-success"></i>
+          <h5 class="card-title mt-3">Receptores</h5>
+          <a href="{% url 'pagina_do_receptor' %}" class="btn btn-outline-success">Acessar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registrar Doação -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-journal-plus fs-1 text-warning"></i>
+          <h5 class="card-title mt-3">Registrar Doação</h5>
+          <a href="{% url 'registrar_doacao' %}" class="btn btn-outline-warning">Registrar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Histórico de Doações -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-clock-history fs-1 text-info"></i>
+          <h5 class="card-title mt-3">Histórico</h5>
+          <a href="{% url 'historico_doacoes' %}" class="btn btn-outline-info">Ver Histórico</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Órgãos -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-heart-pulse fs-1 text-danger"></i>
+          <h5 class="card-title mt-3">Órgãos</h5>
+          <a href="{% url 'listar_orgaos' %}" class="btn btn-outline-danger">Gerenciar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Administradores -->
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body text-center">
+          <i class="bi bi-shield-lock fs-1 text-dark"></i>
+          <h5 class="card-title mt-3">Administradores</h5>
+          <a href="{% url 'pagina_do_administrador' %}" class="btn btn-outline-dark">Acessar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="col">
+      <div class="card h-100 shadow-sm bg-light">
+        <div class="card-body text-center">
+          <i class="bi bi-box-arrow-right fs-1 text-danger"></i>
+          <h5 class="card-title mt-3">Sair</h5>
+          <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

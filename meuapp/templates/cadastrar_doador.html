@@ -1,11 +1,66 @@
 {% extends 'base.html' %}
 {% block title %}Cadastrar Doador{% endblock %}
+
 {% block content %}
 <h2>Cadastrar Doador</h2>
+
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    {{ form.non_field_errors }}
+
+    <!-- Campos individuais -->
+    <p>{{ form.nome.label_tag }} {{ form.nome }}</p>
+    <p>{{ form.cpf.label_tag }} {{ form.cpf }}</p>
+    <p>{{ form.tipo_sanguineo.label_tag }} {{ form.tipo_sanguineo }}</p>
+    <p>{{ form.data_nascimento.label_tag }} {{ form.data_nascimento }}</p>
+    <p>{{ form.sexo.label_tag }} {{ form.sexo }}</p>
+    <p>{{ form.profissao.label_tag }} {{ form.profissao }}</p>
+    <p>{{ form.estado_natal.label_tag }} {{ form.estado_natal }}</p>
+    <p>{{ form.cidade_natal.label_tag }} {{ form.cidade_natal }}</p>
+    <p>{{ form.estado_residencia.label_tag }} {{ form.estado_residencia }}</p>
+    <p>{{ form.cidade_residencia.label_tag }} {{ form.cidade_residencia }}</p>
+    <p>{{ form.estado_civil.label_tag }} {{ form.estado_civil }}</p>
+    <p>{{ form.contato_emergencia.label_tag }} {{ form.contato_emergencia }}</p>
+
+    <!-- Intenção de Doar -->
+    <p>
+    <label for="{{ form.intencao_doar.id_for_label }}"><strong>Intenção de Doar:</strong></label><br>
+    {{ form.intencao_doar }}
+    </p>
+
+    <!-- Órgãos -->
+    <p>
+        <strong>{{ form.orgaos_que_deseja_doar.label_tag }}</strong><br>
+        {{ form.orgaos_que_deseja_doar }}
+    </p>
+
     <button type="submit" class="btn btn-success">Salvar</button>
     <a href="{% url 'listar_doadores' %}" class="btn btn-secondary">Cancelar</a>
 </form>
+
+<!-- Script para mostrar campo de "Outra profissão" -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profissaoSelect = document.querySelector('select[name="profissao"]');
+        const outraProfInput = document.querySelector('input[name="outra_profissao"]');
+        const outraProfDiv = outraProfInput ? outraProfInput.closest('p') : null;
+
+        function toggleOutraProfissao() {
+            if (profissaoSelect && outraProfDiv) {
+                if (profissaoSelect.value === 'Outra') {
+                    outraProfDiv.style.display = 'block';
+                } else {
+                    outraProfDiv.style.display = 'none';
+                    outraProfInput.value = '';
+                }
+            }
+        }
+
+        toggleOutraProfissao();  // Executa ao carregar
+        if (profissaoSelect) {
+            profissaoSelect.addEventListener('change', toggleOutraProfissao);
+        }
+    });
+</script>
 {% endblock %}

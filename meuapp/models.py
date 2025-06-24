@@ -28,9 +28,16 @@ ESTADO_CIVIL_CHOICES = [
     ('União Estável', 'União Estável')
 ]
 
+STATUS_DOACAO = [
+    ('PROCESSANDO', 'Em Processamento'),
+    ('CONSULTA', 'Em Consulta'),
+    ('CONCLUIDA', 'Concluída'),
+    ('CANCELADA', 'Cancelada'),
+]
+
 # --- Modelo Abstrato Pessoa ---
 class Pessoa(models.Model):
-    cpf = models.CharField(max_length=11, unique=True)
+    cpf = models.CharField(max_length=14, unique=True)
     nome = models.CharField(max_length=100)
     tipo_sanguineo = models.CharField(max_length=3, choices=TIPO_SANGUINEO_CHOICES)
     data_nascimento = models.DateField()
@@ -55,10 +62,11 @@ class Pessoa(models.Model):
 
 # --- Modelos concretos ---
 class Doador(Pessoa):
-    intencao_doar = models.JSONField(null=True, blank=True)
+    intencao_doar = models.BooleanField(default=False)
+    orgaos_que_deseja_doar = models.ManyToManyField('Orgao', blank=True)
 
-    def __str__(self):
-        return f"{self.nome} ({self.cpf})"
+    def tem_intencao_confirmada(self):
+        return self.intencao_doar
 
 class Receptor(Pessoa):
     orgao_necessario = models.CharField(max_length=50)
@@ -78,24 +86,29 @@ class Administrador(Pessoa):
 
 class Orgao(models.Model):
     nome = models.CharField(max_length=100)
-    tipo = models.CharField(max_length=50, choices=[
-        ('Orgão', 'Orgão'),
-        ('Tecido', 'Tecido'),
-        ('Sangue', 'Sangue'),
-    ])
+    tipo = models.CharField(max_length=50)
+    descricao = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nome
+
+class Doacao(models.Model):
+    doador = models.ForeignKey(Doador, on_delete=models.CASCADE)
+    receptor = models.ForeignKey(Receptor, on_delete=models.CASCADE)
+    orgao = models.ForeignKey(Orgao, on_delete=models.CASCADE)
+    data_registro = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_DOACAO, default='PROCESSANDO')
+
+    def __str__(self):
+        return f"Doação de {self.orgao} de {self.doador.nome} para {self.receptor.nome}"
 
 
 class CentroDistribuicao(models.Model):
     
     nome = models.CharField(max_length=100)
-    ativo = models.BooleanField(default=True)
-    endereço = models.CharField(max_length=100)  # Podemos usar o endereço como nome do centro
+    ativo = models.BooleanField(default=True)  # Podemos usar o endereço como nome do centro
     cidade = models.CharField(max_length=100)
     estado = models.CharField(max_length=2)
-    telefone = models.CharField(max_length=20, blank=True, null=True)
     estoque = models.JSONField(null=True, blank=True)  # Para armazenar o estoque dos órgãos
 
     def __str__(self):

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Doadores Compatíveis para {{ receptor.nome }}</h2>
+<ul>
+    {% for doador in doadores %}
+    <li>{{ doador.nome }} - {{ doador.tipo_sanguineo }} - Órgãos: 
+        {{ doador.orgaos_doados.all|join:", " }}
+        <a href="{% url 'registrar_doacao' %}?doador={{ doador.id }}&receptor={{ receptor.id }}" class="btn btn-sm btn-outline-primary">Registrar Doação</a>
+    </li>
+    {% empty %}
+    <li>Nenhum doador compatível encontrado.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

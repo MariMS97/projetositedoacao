@@ -16,8 +16,8 @@
       "tipo_sanguineo": "A-"
     },
     "intencao": {
-      "status": "n",
-      "orgaos_id": []
+      "status": false,
+      "orgaos_nomes": ["Coração", "Pulmão"]
     }
   },
   {
@@ -37,8 +37,8 @@
       "tipo_sanguineo": "AB-"
     },
     "intencao": {
-      "status": "s",
-      "orgaos_id": []
+      "status": true,
+      "orgaos_nomes": ["Rim", "Fígado"]
     }
   },
   {
@@ -58,8 +58,8 @@
       "tipo_sanguineo": "AB-"
     },
     "intencao": {
-      "status": "s",
-      "orgaos_id": []
+      "status": true,
+      "orgaos_nomes": ["Pâncreas", "Córnea"]
     }
   },
   {
@@ -79,8 +79,8 @@
       "tipo_sanguineo": "A+"
     },
     "intencao": {
-      "status": "n",
-      "orgaos_id": []
+      "status": false,
+      "orgaos_nomes": ["Pulmão", "Fígado"]
     }
   },
   {
@@ -100,8 +100,8 @@
       "tipo_sanguineo": "A-"
     },
     "intencao": {
-      "status": "s",
-      "orgaos_id": []
+      "status": true,
+      "orgaos_nomes": ["Coração", "Medula Óssea"]
     }
   },
   {
@@ -121,8 +121,8 @@
       "tipo_sanguineo": "A+"
     },
     "intencao": {
-      "status": "s",
-      "orgaos_id": []
+      "status": true,
+      "orgaos_nomes": ["Fígado", "Rim"]
     }
   },
   {
@@ -142,71 +142,8 @@
       "tipo_sanguineo": "B-"
     },
     "intencao": {
-      "status": "s",
-      "orgaos_id": []
-    }
-  },
-  {
-    "dados": {
-      "nome": "Hadassa da Rocha",
-      "idade": 72,
-      "sexo": "F",
-      "data_nascimento": "1954/01/19",
-      "cidade_natal": "Silva de Moraes",
-      "estado_natal": "AM",
-      "cpf": "54387960256",
-      "profissao": "Aventureira",
-      "cidade_residencia": "Porto de Macedo",
-      "estado_residencia": "TO",
-      "estado_civil": "Viuvo",
-      "contato_emergencia": "0900-549-2512",
-      "tipo_sanguineo": "A+"
-    },
-    "intencao": {
-      "status": "n",
-      "orgaos_id": []
-    }
-  },
-  {
-    "dados": {
-      "nome": "Henry Gabriel Casa Grande",
-      "idade": 59,
-      "sexo": "M",
-      "data_nascimento": "1960/06/06",
-      "cidade_natal": "Montenegro da Serra",
-      "estado_natal": "AP",
-      "cpf": "10978532686",
-      "profissao": "Militar",
-      "cidade_residencia": "Moura",
-      "estado_residencia": "RS",
-      "estado_civil": "Divorciado",
-      "contato_emergencia": "(021) 1135-3934",
-      "tipo_sanguineo": "AB-"
-    },
-    "intencao": {
-      "status": "n",
-      "orgaos_id": []
-    }
-  },
-  {
-    "dados": {
-      "nome": "Luan Marques",
-      "idade": 33,
-      "sexo": "M",
-      "data_nascimento": "1965/08/22",
-      "cidade_natal": "Correia de Vieira",
-      "estado_natal": "PI",
-      "cpf": "63479581200",
-      "profissao": "Amazona",
-      "cidade_residencia": "Abreu Alegre",
-      "estado_residencia": "RJ",
-      "estado_civil": "Solteiro",
-      "contato_emergencia": "(021) 7476-9910",
-      "tipo_sanguineo": "B-"
-    },
-    "intencao": {
-      "status": "s",
-      "orgaos_id": []
+      "status": true,
+      "orgaos_nomes": ["Pulmões", "Córneas"]
     }
   }
 ]

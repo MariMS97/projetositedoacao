@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Login Administrador{% endblock %}
+{% block title %}Login Usuário{% endblock %}
 {% block content %}
-<h2>Login do Administrador</h2>
+<h2>Login do Usuário</h2>
 <hr>
 <form method="post">
   {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.GET.next }}">  <!-- aqui está o campo essencial -->
+
   <div class="mb-3">
     <label for="username">Nome de Usuário:</label>
     <input type="text" class="form-control" name="username" required>
@@ -15,4 +17,9 @@
   </div>
   <button type="submit" class="btn btn-primary">Entrar</button>
 </form>
+{% if mostrar_cadastro %}
+  <hr>
+  <p>Ainda não tem um usuário cadastrado?</p>
+  <a href="{% url 'cadastrar_administrador' %}" class="btn btn-outline-success">Cadastrar Administrador</a>
+{% endif %}
 {% endblock %}
